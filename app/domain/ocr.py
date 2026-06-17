@@ -19,5 +19,8 @@ class OcrResult(TypedDict):
 
 
 class OcrEngine(Protocol):
+    def load_models(self) -> None:
+        """Load OCR models required by this engine."""
+
     def recognize_image(self, image_path: Path, page_number: int) -> OcrPage:
         """Extract OCR lines from one image file."""

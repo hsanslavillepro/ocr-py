@@ -10,6 +10,9 @@ class OcrService:
     def __init__(self, engine: OcrEngine) -> None:
         self.engine = engine
 
+    def ensure_ready(self) -> None:
+        self.engine.load_models()
+
     def run(self, input_path: Path) -> OcrResult:
         if input_path.suffix.lower() == ".pdf":
             with TemporaryDirectory() as tmp_dir:

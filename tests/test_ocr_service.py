@@ -6,6 +6,15 @@ import pytest
 from app.services.ocr_service import OcrService
 
 
+def test_ensure_ready_loads_engine_models() -> None:
+    engine = Mock()
+    service = OcrService(engine=engine)
+
+    service.ensure_ready()
+
+    engine.load_models.assert_called_once()
+
+
 def test_run_recognizes_single_image() -> None:
     engine = Mock()
     engine.recognize_image.return_value = {
