@@ -1,0 +1,1 @@
+"""External OCR engine implementations."""
