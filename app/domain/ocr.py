@@ -1,5 +1,7 @@
 from pathlib import Path
-from typing import Protocol, TypedDict
+from typing import Protocol
+
+from typing_extensions import TypedDict
 
 
 class OcrLine(TypedDict):
