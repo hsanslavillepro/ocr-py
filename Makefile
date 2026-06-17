@@ -32,7 +32,7 @@ dev:
 test:
 	uv run pytest tests
 
-coverage:
+coverage: install-test
 	uv run pytest --cov=app --cov-report=term-missing tests
 
 docker-build:

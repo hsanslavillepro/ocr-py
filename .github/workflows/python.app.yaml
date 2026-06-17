@@ -31,13 +31,10 @@ jobs:
         run: pipx install uv
 
       - name: Create virtual environment
-        run: uv venv
-
-      - name: Install test dependencies
-        run: uv pip install -r requirements-test.txt
+        run: make venv
 
       - name: Run tests with coverage
-        run: uv run pytest --cov=app --cov-report=term-missing tests
+        run: make coverage
 
   docker-build:
     name: Build Docker image
@@ -50,4 +47,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t ocr-api:${{ github.sha }} .
+        run: make docker-build IMAGE_TAG=${{ github.sha }}
