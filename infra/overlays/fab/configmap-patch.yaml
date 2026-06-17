@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ocr-api-config
+data:
+  LOG_LEVEL: "DEBUG"
+  OCR_MODELS_S3_URI: "s3://your-test-bucket/path/to/paddleocr"

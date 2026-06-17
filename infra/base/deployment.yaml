@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocr-api
+  labels:
+    app: ocr-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ocr-api
+  template:
+    metadata:
+      labels:
+        app: ocr-api
+    spec:
+      initContainers:
+        - name: download-ocr-models
+          image: amazon/aws-cli:2.15.57
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              aws s3 sync "$OCR_MODELS_S3_URI" /models/paddleocr --only-show-errors
+              test -f /models/paddleocr/det/inference.pdmodel
+              test -f /models/paddleocr/det/inference.pdiparams
+              test -f /models/paddleocr/rec/inference.pdmodel
+              test -f /models/paddleocr/rec/inference.pdiparams
+              if [ "$OCR_USE_ANGLE_CLS" = "true" ]; then
+                test -f /models/paddleocr/cls/inference.pdmodel
+                test -f /models/paddleocr/cls/inference.pdiparams
+              fi
+          envFrom:
+            - configMapRef:
+                name: ocr-api-config
+            - secretRef:
+                name: ocr-api-s3-secret
+          volumeMounts:
+            - name: ocr-models
+              mountPath: /models/paddleocr
+      containers:
+        - name: api
+          image: ocr-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: ocr-api-config
+          volumeMounts:
+            - name: ocr-models
+              mountPath: /app/models/paddleocr
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+      volumes:
+        - name: ocr-models
+          persistentVolumeClaim:
+            claimName: ocr-api-models

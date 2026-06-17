@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ocr-api-config
+data:
+  LOG_LEVEL: "INFO"
+  OCR_LANGUAGE: "fr"
+  OCR_SHOW_LOG: "false"
+  OCR_USE_ANGLE_CLS: "true"
+  OCR_VERSION: "PP-OCRv4"
+  OCR_DET_MODEL_DIR: "/app/models/paddleocr/det"
+  OCR_REC_MODEL_DIR: "/app/models/paddleocr/rec"
+  OCR_CLS_MODEL_DIR: "/app/models/paddleocr/cls"
+  AWS_DEFAULT_REGION: "eu-west-3"
+  OCR_MODELS_S3_URI: "s3://your-bucket/path/to/paddleocr"

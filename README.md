@@ -178,6 +178,40 @@ Override the image name or tag:
 make docker-build IMAGE_NAME=ocr-api IMAGE_TAG=dev
 ```
 
+## Kubernetes
+
+Kubernetes manifests are managed with Kustomize:
+
+```text
+infra/
+├── base/
+└── overlays/
+    ├── prod/
+    └── fab/
+```
+
+Before applying, update:
+
+- the image name and tag in the target overlay
+- `OCR_MODELS_S3_URI` in the target overlay ConfigMap patch
+- S3 credentials in `infra/base/secret.yaml` or replace it with your secret management workflow
+
+The Deployment uses an init container to download PaddleOCR models from S3 into
+a `ReadWriteOnce` persistent volume mounted at `/app/models/paddleocr` before
+the API starts.
+
+Apply test:
+
+```bash
+kubectl apply -k infra/overlays/fab
+```
+
+Apply production:
+
+```bash
+kubectl apply -k infra/overlays/prod
+```
+
 ## Development
 
 Activate the virtual environment:
