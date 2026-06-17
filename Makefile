@@ -33,7 +33,8 @@ test:
 	uv run pytest tests
 
 coverage: install-test
-	uv run pytest --cov=app --cov-report=term-missing tests
+	mkdir -p reports
+	uv run pytest --junitxml=reports/junit.xml --cov=app --cov-report=term-missing --cov-report=xml:reports/coverage.xml tests
 
 docker-build:
 	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .

@@ -37,7 +37,9 @@ uploads/
 
 # Coverage
 .coverage
+coverage.xml
 htmlcov/
+reports/
 
 # Tool caches
 .pytest_cache/
